@@ -1,7 +1,9 @@
 fn main() {
     copy_s();
-    ownership_and_callling();
+    ownership_and_calling();
     return_and_ownership();
+    reference_mutable();
+    slice_first_word();
 }
 
 fn copy_s() {
@@ -14,7 +16,7 @@ fn copy_s() {
     println!("2: {}!", s2);
 }
 
-fn ownership_and_callling() {
+fn ownership_and_calling() {
     let s = String::from("hello");
 
     take_ownership(s);
@@ -70,3 +72,99 @@ fn calc_len_ref(s: &String) -> usize {
     s.len()
 }
 
+fn reference_mutable() {
+    let mut s = String::from("Ref Hello");
+    println!("reference_mutable: s: {}", s);
+    change_hello(&mut s);
+    println!("reference_mutable: s: {}", s);
+
+    let r1 = &mut s;
+    // let r2 = &mut s; // fails
+    println!("reference_mutable: r1: {}", r1);
+    // println!("reference_mutable: {}", r2);
+
+    let r1 = &s;
+    // let r2 = &mut s; // fails
+    println!("reference_mutable: r1: {}", r1);
+    // println!("reference_mutable: {}", r2);
+
+    let r1 = &s;
+    let r2 = &s;
+    println!("reference_mutable: r1: {}", r1);
+    println!("reference_mutable: r2: {}", r2);
+
+    let mut r3 = &mut s;
+    change_hello(&mut r3);
+    println!("reference_mutable: r3: {}", r3);
+
+    let dangle_s = dangle_ref();
+    println!("reference_mutable: dangle_s: {}", dangle_s);
+}
+
+fn change_hello(s: &mut String) {
+    s.push_str(" World");
+}
+
+// Fails:
+// fn dangle_ref() -> &String {
+//     let s = String::from("Dangle Hello");
+//     &s
+// }
+
+fn dangle_ref() -> String {
+    let s = String::from("Dangle Hello");
+    s
+}
+
+fn slice_first_word() {
+    let s: String = String::from("First Word Counts");
+    println!("slice_first_word: {}/{}", first_word(&s), s.len());
+    println!("slice_first_word: man: {}/{}", first_word_manual(&s), s.len());
+    println!("slice_first_word: sli: {}/{}", first_word_slice(&s).len(), s.len());
+
+    let s: String = String::from("First_Word_Counts");
+    println!("slice_first_word: {}/{}", first_word(&s), s.len());
+    println!("slice_first_word: man: {}/{}", first_word_manual(&s), s.len());
+    println!("slice_first_word: sli: {}/{}", first_word_slice(&s).len(), s.len());
+
+    let mut s = String::from("First Word Counts");
+    s.push_str(" Really");
+    let s_first = first_word_slice(&s);
+    // s.clear(); // fails
+    println!("slice_first_word: s_first: {}", s_first);
+}
+
+fn first_word(s: &String) -> usize {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return i;
+        }
+    }
+    s.len()
+}
+
+fn first_word_manual(s: &String) -> usize {
+    let bytes = s.as_bytes();
+    let mut i: usize = 0;
+
+    for &item in bytes.iter() {
+        if item == b' ' {
+            return i;
+        }
+        i += 1;
+    }
+    s.len()
+}
+
+fn first_word_slice(s: &str) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+    &s[..]
+}
