@@ -57,17 +57,23 @@ fn plus_values() {
 }
 
 fn if_let_example() {
-    let some_u8 = Some(3);
+    let some_u3 = Some(3);
 
-    if let Some(3) = some_u8 {
-        println!("Some is 3");
+    if let Some(3) = some_u3 {
+        println!("Some is 3 ({:?})", some_u3);
     } else {
-        println!("Some is not 3");
+        println!("Some is not 3 ({:?})", some_u3);
     }
 
-    if let Some(5) = some_u8 {
-        println!("Some is 5");
+    // if let some_u3 = Some(4) { // wrong
+    //     println!("Some is 3 ({:?})", some_u3);
+    // } else {
+    //     println!("Some is not 3 ({:?})", some_u3);
+    // }
+
+    if let Some(5) = some_u3 {
+        println!("Some is 5 ({:?})", some_u3);
     } else {
-        println!("Some is not 5");
+        println!("Some is not 5 ({:?})", some_u3);
     }
 }
