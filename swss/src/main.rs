@@ -13,7 +13,7 @@ fn main() {
                 let msg = websocket.read_message().unwrap();
 
                 if msg.is_binary() || msg.is_text() {
-                    println("Msg: {}", msg);
+                    println!("Msg: {}", msg);
                     websocket.write_message(msg);
                 }
             }
