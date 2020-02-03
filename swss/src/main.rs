@@ -48,6 +48,7 @@ fn main() {
                             websocket.write_message(msg);
                         }
                     }
+                    println!("Connection closed");
                 });
             }
             Err(e) => {
