@@ -1,7 +1,12 @@
+use std::collections::HashMap;
+
 fn main() {
     borrow_one_more_time();
     vectors_borrow();
     vectors_iterate();
+    walking_in_strings();
+    indexing_in_strings();
+    hashmaps();
 }
 
 fn borrow_one_more_time() {
@@ -110,4 +115,93 @@ fn vectors_iterate() {
         *i += 5;
     }
     println!("Vector: {:?}", v);
+}
+
+fn walking_in_strings() {
+    let mut s = String::from("foo");
+    s.push_str("bar");
+    println!("String: {}", s);
+
+    let mut s = String::from("źdźbło");
+    s.push('ł');
+    println!("String: {}", s);
+
+    let s1 = String::from("Hello ");
+    let s2 = String::from("World");
+    let s3 = s1 + &s2;
+    // println!("s1: {}", s1); // fails
+    println!("s2: {}", s2);
+    println!("s3: {}", s3);
+
+    let s1 = String::from("Hello");
+    let s2 = String::from("World");
+    let s3 = format!("{} {}", s1, s2);
+    println!("s1: {}", s1);
+    println!("s2: {}", s2);
+    println!("s3: {}", s3);
+}
+
+fn indexing_in_strings() {
+    let hello = "źdźbło";
+    let c = "";
+    // let c = &hello[0]; // fails
+    // let c = &hello[0..1]; // panics: thread 'main' panicked at 'byte index 1 is not a char boundary; it is inside 'ź' (bytes 0..2) of `źdźbło`', src/libcore/str/mod.rs:2068:5
+
+    println!("hello[]: {} = {}", hello, c);
+
+    for c in hello.chars() {
+        println!("[]: {}", c);
+    }
+
+    for b in hello.bytes() {
+        println!("[]: {:#x}", b);
+    }
+}
+
+fn hashmaps() {
+    let mut scores = HashMap::new();
+    let team1 = String::from("Blue");
+    let team2 = String::from("Red");
+    scores.insert(team1, 10);
+    scores.insert(team2, 15);
+    println!("Hashmap: {:?}", scores);
+    // println!("Teams: {}, {}", team1, team2); // fails
+
+    let team_name = String::from("Blue");
+    let score = scores.get(&team_name);
+    println!("Score for {} is {:?}", team_name, score);
+    if let Some(score) = score { // This works but it is not really readable (scope of "score")
+        println!("Score for {} is {:?}", team_name, score);
+    }
+    if let Some(v) = score {
+        println!("Score for {} is {:?}", team_name, v);
+    }
+
+    let mut scores: HashMap<String, _> = HashMap::new();
+    let team1 = String::from("Blue");
+    let team2 = String::from("Red");
+    scores.insert(team1, 10);
+    scores.insert(team2, 15);
+    println!("Hashmap: {:?}", scores);
+    // println!("Teams: {}, {}", team1, team2); // fails
+
+    let mut scores: HashMap<&String, _> = HashMap::new();
+    let mut team1 = String::from("Blue");
+    let team2 = String::from("Red");
+    scores.insert(&team1, 10);
+    scores.insert(&team2, 15);
+    println!("Teams: {}, {}", team1, team2);
+    println!("Hashmap: {:?}", scores);
+    // team1.push_str("NotReally"); // fails
+    println!("Teams: {}, {}", team1, team2);
+    println!("Hashmap: {:?}", scores);
+
+    let teams = vec![String::from("Yellow"), String::from("Black")];
+    let initial_scores = vec![2000, 5];
+    let scores: HashMap<_, _> = teams.iter().zip(initial_scores.iter()).collect();
+    println!("Hashmap: {:?}", scores);
+    println!("teams {:?}", teams);
+
+    let scores: HashMap<&String, &u16> = teams.iter().zip(initial_scores.iter()).collect();
+    println!("Hashmap: {:?}", scores);
 }
