@@ -176,6 +176,21 @@ fn hashmaps() {
     if let Some(v) = score {
         println!("Score for {} is {:?}", team_name, v);
     }
+    for (key, value) in &scores {
+        println!("Score[{}]: {}", key, value);
+    }
+    scores.insert(String::from("Blue"), 30);
+    println!("Overwrite Hashmap: {:?}", scores);
+    scores.entry(String::from("Blue")).or_insert(40);
+    scores.entry(String::from("Yellow")).or_insert(50);
+    println!("Or Insert Hashmap: {:?}", scores);
+
+    // let blue_score = scores.entry(team_name).or_insert(45); // Works but not good because moves the ownership of team_name
+    let blue_score = scores.entry(String::from(&team_name)).or_insert(45);
+    println!("Score for {} is {}", team_name, blue_score);
+    *blue_score += 13;
+    println!("Score for {} is {}", team_name, blue_score);
+    println!("After modifying Hashmap: {:?}", scores);
 
     let mut scores: HashMap<String, _> = HashMap::new();
     let team1 = String::from("Blue");
