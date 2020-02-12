@@ -109,6 +109,47 @@ impl<T, K, V> CacherV3<T, K, V>
     }
 }
 
+// Cacher for values without Copy trait
+// I am not sure if it is possible - the CacherV4.value() would
+// have interface like HashMap.get() and HashMap.insert(). But these are
+// conflicting interfaces and cannot be done in one method...
+//
+// struct CacherV4<T, K, V>
+//     where T: Fn(&K) -> V,
+//           K: Eq + std::hash::Hash,
+// {
+//     calculation: T,
+//     values: HashMap<K, V>,
+// }
+
+// impl<T, K, V> CacherV4<T, K, V>
+//     where T: Fn(&K) -> V,
+//           K: Eq + std::hash::Hash,
+// {
+//     fn new(calculation: T) -> CacherV4<T, K, V> {
+//         CacherV4 {
+//             calculation,
+//             values: HashMap::new(),
+//         }
+//     }
+
+//     fn value<'a>(&'a mut self, arg: K) -> &'a V {
+//         let value = self.values.get(&arg);
+//         match value {
+//             Some(v) => v,
+//             None => {
+//                 let v = (self.calculation)(&arg);
+//                 //let v_ret = &v;
+//                 let k2 = &arg;
+//                 self.values.insert(arg, v);
+//                 // v_ret
+//                 let v2 = self.values.get(k2).unwrap();
+//                 v2
+//             }
+//         }
+//     }
+// }
+
 fn generate_workout(intensity: u32, factor: u32) {
     // let task = calculate_workout_task(intensity); // Approach standard
     // let task = |num| { // Approach basic closure
