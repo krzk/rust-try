@@ -1,6 +1,7 @@
 fn main() {
     largest_example();
     news_and_tweet();
+    lifetimes();
 }
 
 fn largest_example() {
@@ -117,4 +118,20 @@ fn new_reading() -> impl Summary {
         reply: false,
         retweet: false,
     }
+}
+
+fn longest_str<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
+
+fn lifetimes() {
+    let s1 = String::from("abcd");
+    let s2 = "xyz";
+
+    let result = longest_str(s1.as_str(), s2);
+    println!("The longest string is: {}", result);
 }
