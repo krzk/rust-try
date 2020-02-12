@@ -44,6 +44,37 @@ impl<T> CacherV1<T>
     }
 }
 
+struct CacherV2<T>
+    where T: Fn(u32) -> u32
+{
+    calculation: T,
+    values: HashMap<u32, u32>,
+}
+
+impl<T> CacherV2<T>
+    where T: Fn(u32) -> u32
+{
+    fn new(calculation: T) -> CacherV2<T> {
+        CacherV2 {
+            calculation,
+            values: HashMap::new(),
+        }
+    }
+
+    fn value(&mut self, arg: u32) -> u32 {
+        // *self.values.entry(arg).or_insert((self.calculation)(arg)) // not good, closure got called each time
+        let value = self.values.get(&arg);
+        match value {
+            Some(v) => *v,
+            None => {
+                let v = (self.calculation)(arg);
+                self.values.insert(arg, v);
+                v
+            }
+        }
+    }
+}
+
 fn generate_workout(intensity: u32, factor: u32) {
     // let task = calculate_workout_task(intensity); // Approach standard
     // let task = |num| { // Approach basic closure
@@ -103,5 +134,20 @@ mod tests {
         assert_eq!(c.value, Some(12));
         assert_eq!(c.value(0), 12);
         assert_eq!(c.value, Some(12));
+    }
+
+    #[test]
+    fn CacherV2_value() {
+        let calculation = |num| {
+            println!("Test calculation, CacherV2 for {}", num);
+            num * 3
+        };
+        let mut c = CacherV2::new(calculation);
+        assert_eq!(c.value(4), 12);
+        assert_eq!(c.value(4), 12);
+        assert_eq!(c.value(5), 15);
+        assert_eq!(c.value(5), 15);
+        assert_eq!(c.value(0), 0);
+        assert_eq!(c.value(0), 0);
     }
 }
