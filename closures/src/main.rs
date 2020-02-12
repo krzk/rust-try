@@ -75,6 +75,40 @@ impl<T> CacherV2<T>
     }
 }
 
+struct CacherV3<T, K, V>
+    where T: Fn(&K) -> V,
+          K: Eq + std::hash::Hash,
+          V: Copy,
+{
+    calculation: T,
+    values: HashMap<K, V>,
+}
+
+impl<T, K, V> CacherV3<T, K, V>
+    where T: Fn(&K) -> V,
+          K: Eq + std::hash::Hash,
+          V: Copy,
+{
+    fn new(calculation: T) -> CacherV3<T, K, V> {
+        CacherV3 {
+            calculation,
+            values: HashMap::new(),
+        }
+    }
+
+    fn value(&mut self, arg: K) -> V {
+        let value = self.values.get(&arg);
+        match value {
+            Some(v) => *v,
+            None => {
+                let v = (self.calculation)(&arg);
+                self.values.insert(arg, v);
+                v
+            }
+        }
+    }
+}
+
 fn generate_workout(intensity: u32, factor: u32) {
     // let task = calculate_workout_task(intensity); // Approach standard
     // let task = |num| { // Approach basic closure
@@ -149,5 +183,36 @@ mod tests {
         assert_eq!(c.value(5), 15);
         assert_eq!(c.value(0), 0);
         assert_eq!(c.value(0), 0);
+    }
+
+    #[test]
+    fn CacherV3_value_u32_u32() {
+        let calculation = |num: &u32| {
+            println!("Test calculation, CacherV3 for {}", num);
+            num * 3
+        };
+        let mut c = CacherV3::new(calculation);
+        assert_eq!(c.value(4), 12);
+        assert_eq!(c.value(4), 12);
+        assert_eq!(c.value(5), 15);
+        assert_eq!(c.value(5), 15);
+        assert_eq!(c.value(0), 0);
+        assert_eq!(c.value(0), 0);
+    }
+
+    #[test]
+    fn CacherV3_value_string_usize() {
+        let calculation = |num: &String| {
+            println!("Test calculation, CacherV3 for {}", num);
+            num.len() * 3
+        };
+        // FIXME: No clue how to set first type to Cacher<>
+        // Something like: (Fn(String) -> u32)?
+        let mut c: CacherV3<_, String, usize> = CacherV3::new(calculation);
+        assert_eq!(c.value(String::from("1234")), 12);
+        assert_eq!(c.value(String::from("1234")), 12);
+        assert_eq!(c.value(String::from("12345")), 15);
+        assert_eq!(c.value(String::from("12345")), 15);
+        assert_eq!(c.value(String::from("")), 0);
     }
 }
