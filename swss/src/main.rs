@@ -30,16 +30,18 @@ fn main() {
     let acceptor = Arc::new(acceptor.build());
 
     let server = TcpListener::bind("0.0.0.0:8081").unwrap();
+    let mut conn_count = 0;
     for stream in server.incoming() {
         match stream {
             Ok(stream) => {
-                println!("Incoming connection");
+                conn_count += 1;
+                println!("Incoming connection #{}", conn_count);
                 let acceptor = acceptor.clone();
                 spawn (move || {
                     let stream = acceptor.accept(stream).unwrap();
                     //let mut websocket = accept(stream.unwrap()).unwrap();
                     let mut websocket = accept(stream).unwrap();
-                    println!("Incoming connection accepted");
+                    println!("Incoming connection #{} accepted", conn_count);
                     loop {
                         let msg = websocket.read_message().unwrap();
 
@@ -48,13 +50,13 @@ fn main() {
                             websocket.write_message(msg);
                         }
                     }
-                    println!("Connection closed");
+                    println!("Connection #{} closed", conn_count);
                 });
             }
             Err(e) => {
                 println!("Error accepting connection");
             }
         }
-
     }
+    println!("Finished, connections: {}", conn_count);
 }
