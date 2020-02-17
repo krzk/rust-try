@@ -51,7 +51,7 @@ fn main() {
                             });
                         }
                     }
-                    println!("Connection #{} closed", conn_count);
+                    // println!("Connection #{} closed", conn_count); // Not reachable
                 });
             }
             Err(e) => {
