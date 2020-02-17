@@ -23,7 +23,8 @@ fn main() {
     acceptor.set_certificate_file("/home/krzk/secure/internal-development.tls.cert.pem", SslFiletype::PEM).unwrap();
     acceptor.set_private_key_file("/home/krzk/secure/internal-development.tls.key.pem", SslFiletype::PEM).unwrap();
     acceptor.set_verify(SslVerifyMode::PEER | SslVerifyMode::FAIL_IF_NO_PEER_CERT);
-    // FIXME: fails after one connection
+    // Add some fake (but fixed) session ID for reusing connections
+    acceptor.set_session_id_context(&[1]);
 
     acceptor.check_private_key().unwrap();
     let acceptor = Arc::new(acceptor.build());
