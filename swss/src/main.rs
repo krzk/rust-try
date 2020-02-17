@@ -1,10 +1,9 @@
 use std::thread::spawn;
 use tungstenite::server::accept;
 
-use openssl::ssl::{SslVerifyMode, SslMethod, SslAcceptor, SslStream, SslFiletype};
-use std::net::{TcpListener, TcpStream};
+use openssl::ssl::{SslVerifyMode, SslMethod, SslAcceptor, SslFiletype};
+use std::net::TcpListener;
 use std::sync::Arc;
-use std::thread;
 
 fn main() {
     let mut acceptor = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
