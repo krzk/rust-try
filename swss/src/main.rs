@@ -55,7 +55,7 @@ fn main() {
                 });
             }
             Err(e) => {
-                println!("Error accepting connection");
+                println!("Error accepting connection: {}", e);
             }
         }
     }
