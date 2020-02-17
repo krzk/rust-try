@@ -46,7 +46,9 @@ fn main() {
 
                         if msg.is_binary() || msg.is_text() {
                             println!("Msg: {}", msg);
-                            websocket.write_message(msg);
+                            websocket.write_message(msg).unwrap_or_else(|error| {
+                                println!("Error {} writing to websocket connection #{}", error, conn_count);
+                            });
                         }
                     }
                     println!("Connection #{} closed", conn_count);
